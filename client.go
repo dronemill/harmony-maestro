@@ -5,12 +5,16 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/dronemill/eventsocket-client-go"
+	"github.com/dronemill/harmony-client-go"
 )
 
 // Client is the main ES client of the Maestro
 type Client struct {
 	// Portal is the portal client
 	Portal *eventsocketclient.Client
+
+	// Harmony is a connected Harmony client
+	Harmony *harmonyclient.Client
 }
 
 // NewClient returns a new, connected Portal client
@@ -33,10 +37,32 @@ func NewClient() *Client {
 	log.WithField("clientID", portal.Id).Info("Connected to portal")
 
 	client := &Client{
-		Portal: portal,
+		Portal:  portal,
+		Harmony: harmonyClient(),
 	}
 
 	return client
+}
+
+// harmonyClient will get a connected harmony client
+func harmonyClient() *harmonyclient.Client {
+	hconf := harmonyclient.Config{
+		APIHost:      config.Harmony.API,
+		APIVersion:   "v1",
+		APIVerifySSL: config.Harmony.VerifySSL,
+	}
+
+	log.WithField("harmonyAPI", config.Harmony.API).Info("Attempting connection to HarmonyAPI")
+
+	var err error
+	h, err := harmonyclient.NewHarmonyClient(hconf)
+
+	if err != nil {
+		// TODO: maybe like dont bomb out here.. @pmccarren
+		log.Fatalf("Failed connecting to the HarmonyAPI: %s", err.Error())
+	}
+
+	return h
 }
 
 func (c *Client) run() {
