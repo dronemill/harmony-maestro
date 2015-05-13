@@ -13,6 +13,9 @@ func TestInitConfigDefaultConfig(t *testing.T) {
 			API:       "http://harmony.dev:4774",
 			VerifySSL: true,
 		},
+		Eventsocket: EventsocketConfig{
+			Port: 4778,
+		},
 	}
 	if err := initConfig(); err != nil {
 		t.Errorf(err.Error())

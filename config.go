@@ -13,8 +13,11 @@ var (
 	config Config // holds the global config
 
 	c struct {
-		logLevel string
-		harmony  struct {
+		logLevel    string
+		eventsocket struct {
+			port uint
+		}
+		harmony struct {
 			api       string
 			verifyssl bool
 		}
@@ -33,6 +36,8 @@ func init() {
 
 	flag.StringVar(&c.harmony.api, "harmony.api", "http://harmony.dev:4774", "the url to the Harmony API")
 	flag.BoolVar(&c.harmony.verifyssl, "harmony.verifyssl", true, "verify ssl connections to the harmony api")
+
+	flag.UintVar(&c.eventsocket.port, "port", 4778, "port for eventsocket to listen on")
 }
 
 // Config is the main config type
@@ -42,15 +47,24 @@ type Config struct {
 
 	// Harmony is the main Harmony config
 	Harmony HarmonyConfig `toml:"Harmony"`
+
+	// Eventsocket is the main Harmony config
+	Eventsocket EventsocketConfig `toml:"Eventsocket"`
 }
 
-// HarmonyConfig is the main Harmony config
+// HarmonyConfig is the main eventsocket config
 type HarmonyConfig struct {
 	// API url to the Harmony API
 	API string `toml:"API"`
 
 	// VerifySSL is wether ot not we are to verify the secure Harmony API connections
 	VerifySSL bool `toml:"VerifySSL"`
+}
+
+// EventsocketConfig is the main eventsocket config
+type EventsocketConfig struct {
+	// Port to listen on
+	Port uint `toml:"Port"`
 }
 
 func initConfig() error {
@@ -66,6 +80,9 @@ func initConfig() error {
 		Harmony: HarmonyConfig{
 			API:       "http://harmony.dev:4774",
 			VerifySSL: true,
+		},
+		Eventsocket: EventsocketConfig{
+			Port: 4778,
 		},
 	}
 
@@ -84,6 +101,7 @@ func initConfig() error {
 			return err
 		}
 	}
+
 	// Update config from commandline flags.
 	processFlags()
 
@@ -102,9 +120,13 @@ func setConfigFromFlag(f *flag.Flag) {
 	switch f.Name {
 	case "logLevel":
 		config.LogLevel = c.logLevel
+
 	case "harmony.api":
 		config.Harmony.API = c.harmony.api
 	case "harmony.verifyssl":
 		config.Harmony.VerifySSL = c.harmony.verifyssl
+
+	case "port":
+		config.Eventsocket.Port = c.eventsocket.port
 	}
 }
