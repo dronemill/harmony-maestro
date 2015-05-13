@@ -95,4 +95,17 @@ func (c *Client) handleBatondBoot(r *eventsocketclient.Received) {
 		WithField("clientID", clientID).
 		WithField("machineID", machineID).
 		Info("A Batond has booted!")
+
+	err := c.Harmony.MachinesEsClientIdUpdate(machineID, clientID)
+
+	if err != nil {
+		log.WithField("error", err.Error()).
+			WithField("machineID", machineID).
+			WithField("clientID", clientID).
+			Fatal("Failed updating machine with es_client_id")
+	}
+
+	log.WithField("machineID", machineID).
+		WithField("clientID", clientID).
+		Info("Updated machine's es_client_id")
 }
