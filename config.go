@@ -37,7 +37,7 @@ func init() {
 	flag.StringVar(&c.harmony.api, "harmony.api", "http://harmony.dev:4774", "the url to the Harmony API")
 	flag.BoolVar(&c.harmony.verifyssl, "harmony.verifyssl", true, "verify ssl connections to the harmony api")
 
-	flag.UintVar(&c.eventsocket.port, "port", 4778, "port for eventsocket to listen on")
+	flag.UintVar(&c.eventsocket.port, "port", 4775, "port for eventsocket to listen on")
 }
 
 // Config is the main config type
@@ -82,7 +82,7 @@ func initConfig() error {
 			VerifySSL: true,
 		},
 		Eventsocket: EventsocketConfig{
-			Port: 4778,
+			Port: 4775,
 		},
 	}
 

@@ -14,7 +14,7 @@ func TestInitConfigDefaultConfig(t *testing.T) {
 			VerifySSL: true,
 		},
 		Eventsocket: EventsocketConfig{
-			Port: 4778,
+			Port: 4775,
 		},
 	}
 	if err := initConfig(); err != nil {
