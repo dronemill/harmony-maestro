@@ -12,6 +12,9 @@ import (
 var stopped chan bool
 
 func main() {
+	// stopped is the method tp broacast a stop
+	stopped = make(chan bool)
+
 	// parse cli flags
 	flag.Parse()
 
@@ -35,12 +38,15 @@ func main() {
 	}
 
 	es.SetDefaultMaxMessageSize(5242880) // 5MB
+	log.WithField("size", 5242880).Debug("Set ES server max message size")
 
-	log.WithField("port", config.Eventsocket.Port).Info("Starting server")
+	log.WithField("port", config.Eventsocket.Port).Info("Starting ES server")
 	go es.Start()
 
-	stopped = make(chan bool)
-	<-stopped
+	client := NewClient()
+	go client.run()
 
+	// wait until we need to stop
+	<-stopped
 	log.Info("Maestro is shutting down...")
 }
